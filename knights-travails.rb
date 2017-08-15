@@ -16,26 +16,12 @@ class GameBoard
     end
   end
 
-  class Knight
-    attr_accessor :current_position
-
-    def initialize(current_position = nil)
-      @current_position = current_position
-    end
-  end
-
   def generate_node_coordinates
     @board.each_with_index do |row, row_index|
       row.each_with_index do |node, node_index|
         node.position << row_index
         node.position << node_index
       end
-    end
-  end
-
-  def print_board
-    @board.each do |row|
-      puts row.map {|node| print node.position }.join(" ") #print is optional
     end
   end
 
@@ -67,14 +53,13 @@ class GameBoard
     @board.each do |row|
       row.each do |node|
         node.connections = move_generator_from(node)
-        #puts print node.connections #not needed in final code
       end
     end
   end
 
-  #a modified BFS algorithm #start= root, end=searched_value
+  #a modified BFS algorithm #start= root, ends=searched_value
   def knight_moves(start, ends, queue=[], moves_array=[])
-    root = node_accessor(start) #finds the node with start coordinates
+    root = node_accessor(start)
     final = node_accessor(ends)
 
     queue << root
@@ -86,7 +71,8 @@ class GameBoard
           potential = potential.parent
         end
         moves_array << root.position
-        puts "The knight got the the queen in #{moves_array.size} moves! Here's the path: "
+        puts "Travelling from #{start} to #{ends}..."
+        puts "The knight got to his queen in #{moves_array.size} moves! Here's the path: "
         moves_array.each {|move| puts print move}
         return
       else
@@ -102,11 +88,8 @@ class GameBoard
 end
 
 
-
 board = GameBoard.new
-board.print_board
 board.generate_node_coordinates
-board.print_board
-
 board.generate_network
-board.knight_moves([0,0], [3,3])
+#board.knight_moves([0,0], [3,3])
+board.knight_moves([3,3], [7,7])
