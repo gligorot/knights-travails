@@ -72,23 +72,23 @@ class GameBoard
     end
   end
 
-  #function works, move counting is wrong, do that and it's a GG
   #a modified BFS algorithm #start= root, end=searched_value
-  def knight_moves(start, ends, queue=[])
+  def knight_moves(start, ends, queue=[], moves_array=[])
     root = node_accessor(start) #finds the node with start coordinates
     final = node_accessor(ends)
-    moves_array = []
 
     queue << root
     while queue.size > 0
       potential = queue.shift
-      #puts print potential.position #not needed, delete at end
       if potential.position == final.position
-        while potential.parent
-          moves_array << potential
+        until potential == root
+          moves_array << potential.position
           potential = potential.parent
         end
-        return moves_array
+        moves_array << root.position
+        puts "The knight got the the queen in #{moves_array.size} moves! Here's the path: "
+        moves_array.each {|move| puts print move}
+        return
       else
         potential.connections.each do |coordinates|
           child_node = node_accessor(coordinates)
@@ -98,24 +98,6 @@ class GameBoard
       end
     end
   end
-
-  #delete at end, only for reference
-  def breadth_first_search(root, searched_value, queue=[])
-    queue << root
-    while queue.size > 0
-      #line below needed just for debugging
-      #puts print queue.map {|node| node.value}
-      potential = queue.shift
-      if potential.value == searched_value
-        return potential
-      else
-        queue << potential.left_child unless potential.left_child.nil?
-        queue << potential.right_child unless potential.right_child.nil?
-      end
-    end
-    return nil if queue.size == 0
-  end
-
 
 end
 
@@ -127,5 +109,4 @@ board.generate_node_coordinates
 board.print_board
 
 board.generate_network
-result = board.knight_moves([0,0], [3,3]) #result is an array
-result.reverse!.each {|move| puts print move}
+board.knight_moves([0,0], [3,3])
