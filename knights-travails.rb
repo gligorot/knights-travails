@@ -6,11 +6,13 @@ class GameBoard
   end
 
   class Node
-    attr_accessor :connections, :position
+    attr_accessor :connections, :position, :parent
 
     def initialize
       @connections = []
       @position = []
+
+      @parent = nil
     end
   end
 
@@ -75,17 +77,23 @@ class GameBoard
   def knight_moves(start, ends, queue=[])
     root = node_accessor(start) #finds the node with start coordinates
     final = node_accessor(ends)
+    moves_array = []
 
     queue << root
     while queue.size > 0
       potential = queue.shift
-      puts print potential.position #not needed, delete at end
+      #puts print potential.position #not needed, delete at end
       if potential.position == final.position
-        print "least moves X, to position #{potential.position}"
-        return potential
+        while potential.parent
+          moves_array << potential
+          potential = potential.parent
+        end
+        return moves_array
       else
         potential.connections.each do |coordinates|
-          queue << node_accessor(coordinates)
+          child_node = node_accessor(coordinates)
+          child_node.parent = potential
+          queue << child_node
         end
       end
     end
@@ -119,4 +127,5 @@ board.generate_node_coordinates
 board.print_board
 
 board.generate_network
-board.knight_moves([0,0], [3,3])
+result = board.knight_moves([0,0], [3,3]) #result is an array
+result.reverse!.each {|move| puts print move}
